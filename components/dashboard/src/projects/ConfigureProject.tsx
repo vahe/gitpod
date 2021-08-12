@@ -20,6 +20,7 @@ import StatusRunning from "../icons/StatusRunning.svg";
 import PrebuildLogsEmpty from "../images/prebuild-logs-empty.svg";
 import PrebuildLogsEmptyDark from "../images/prebuild-logs-empty-dark.svg";
 import { ThemeContext } from "../theme-context";
+import { trackButton } from "../Analytics";
 
 const MonacoEditor = React.lazy(() => import('../components/MonacoEditor'));
 
@@ -118,7 +119,7 @@ export default function () {
       setEditorMessage(<EditorMessage type="warning" heading="Project type could not be detected." message="You can edit project configuration below before running a prebuild."/>);
       setGitpodYml(TASKS.Other);
     })();
-  }, [ teams, team ]);
+  }, [teams, team]);
 
   const buildProject = async (event: React.MouseEvent) => {
     if (!project) {
@@ -131,6 +132,7 @@ export default function () {
     }
     try {
       setPrebuildWasTriggered(true);
+      trackButton("/<team_name>/<project_name>/configure","run_prebuild","primary_button");
       await getGitpodService().server.setProjectConfiguration(project.id, gitpodYml);
       const result = await getGitpodService().server.createWorkspace({
         contextUrl: `prebuild/${project.cloneUrl}`,
@@ -181,7 +183,7 @@ export default function () {
         <div className="h-20 px-6 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-600 flex space-x-2">
           {prebuildWasTriggered && <PrebuildStatus prebuildPhase={prebuildPhase} isDark={isDark} />}
           <div className="flex-grow" />
-          <button className="secondary">New Workspace</button>
+          <button className="secondary" onClick={() => trackButton ("/<team_name>/<project_name>/configure","new_workspace","secondary_button")}>New Workspace</button>
           <button disabled={isEditorDisabled} onClick={buildProject}>Run Prebuild</button>
         </div>
       </div>
