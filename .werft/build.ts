@@ -234,8 +234,9 @@ export async function build(context, version) {
         installEELicense,
         k3sWsCluster,
         withPayment,
+        dynamicCPULimits,
     };
-    await deployToDev(deploymentConfig, workspaceFeatureFlags, dynamicCPULimits, storage);
+    await deployToDev(deploymentConfig, workspaceFeatureFlags, storage);
     await triggerIntegrationTests(deploymentConfig.version, deploymentConfig.namespace, context.Owner, !withIntegrationTests)
 }
 
@@ -251,12 +252,13 @@ interface DeploymentConfig {
     sweeperImage: string;
     installEELicense: boolean;
     withPayment: boolean;
+    dynamicCPULimits: boolean;
 }
 
 /**
  * Deploy dev
  */
-export async function deployToDev(deploymentConfig: DeploymentConfig, workspaceFeatureFlags, dynamicCPULimits, storage) {
+export async function deployToDev(deploymentConfig: DeploymentConfig, workspaceFeatureFlags, storage) {
     werft.phase("deploy", "deploying to dev");
     const { version, destname, namespace, domain, url, k3sWsCluster } = deploymentConfig;
     const [wsdaemonPortMeta, registryNodePortMeta] = findFreeHostPorts("", [
@@ -446,7 +448,7 @@ export async function deployToDev(deploymentConfig: DeploymentConfig, workspaceF
         workspaceFeatureFlags.forEach((f, i) => {
             flags += ` --set components.server.defaultFeatureFlags[${i}]='${f}'`;
         });
-        if (dynamicCPULimits) {
+        if (deploymentConfig.dynamicCPULimits) {
             flags += ` -f ../.werft/values.variant.cpuLimits.yaml`;
         }
         if ((deploymentConfig.analytics || "").startsWith("segment|")) {
