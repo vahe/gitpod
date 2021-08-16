@@ -45,6 +45,7 @@ import (
 	regapi "github.com/gitpod-io/gitpod/registry-facade/api"
 	wsdaemon "github.com/gitpod-io/gitpod/ws-daemon/api"
 	"github.com/gitpod-io/gitpod/ws-manager/api"
+	"github.com/gitpod-io/gitpod/ws-manager/pkg/clock"
 	"github.com/gitpod-io/gitpod/ws-manager/pkg/manager/internal/grpcpool"
 )
 
@@ -55,6 +56,8 @@ type Manager struct {
 	RawClient kubernetes.Interface
 	Content   *layer.Provider
 	OnChange  func(context.Context, *api.WorkspaceStatus)
+
+	clock *clock.HLC
 
 	activity     map[string]time.Time
 	activityLock sync.Mutex
@@ -116,6 +119,7 @@ func New(config Configuration, client client.Client, rawClient kubernetes.Interf
 		Clientset:    client,
 		RawClient:    rawClient,
 		Content:      cp,
+		clock:        clock.System(),
 		activity:     make(map[string]time.Time),
 		subscribers:  make(map[string]chan *api.SubscribeResponse),
 		wsdaemonPool: grpcpool.New(wsdaemonConnfactory),
