@@ -46,6 +46,11 @@ data:
           "perDtThreshold": "250Mi"
         }
       },
+      "enforcement": {
+        "perRepo": {
+          "*typescript*": { "excessive CPU use": "limit CPU" }
+        }
+      },
       "kubernetes": {
         "enabled": true
       }
