@@ -182,4 +182,6 @@ export class Env extends AbstractComponentEnv {
     readonly contentServiceAddress = process.env.CONTENT_SERVICE_ADDRESS || "content-service:8080";
 
     readonly codeSyncConfig = JSON.parse(process.env.CODE_SYNC_CONFIG || "{}");
+
+    readonly vsxRegistryUrl = getEnvVar("VSX_REGISTRY_URL", "https://open-vsx.org");
 }

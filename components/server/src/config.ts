@@ -148,6 +148,8 @@ export interface ConfigSerialized {
 
     codeSync: CodeSyncConfig;
 
+    vsxRegistryUrl: string;
+
     /**
      * Payment related options
      */
@@ -322,6 +324,7 @@ export namespace ConfigEnv {
             contentServiceAddr: env.contentServiceAddress,
             imageBuilderAddr: env.imageBuilderAddress,
             codeSync: env.codeSyncConfig,
+            vsxRegistryUrl: env.vsxRegistryUrl,
         };
 
         return config;
