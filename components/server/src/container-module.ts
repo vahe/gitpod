@@ -5,7 +5,6 @@
  */
 
 import { ContainerModule } from 'inversify';
-
 import { Server } from './server';
 import { Authenticator } from './auth/authenticator';
 import { Env } from './env';

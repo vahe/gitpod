@@ -29,5 +29,4 @@ export class StartPrebuildContextParser implements IPrefixContextParser {
         };
         return result;
     }
-
 }

@@ -50,6 +50,7 @@ export class TheiaPluginController {
             }
 
             try {
+                // @ts-ignore Type 'ParsedQs' is not assignable
                 const url = await this.pluginService.preflight(id, type);
                 res.send(url);
             } catch (err) {
@@ -81,6 +82,7 @@ export class TheiaPluginController {
             }
 
             try {
+                // @ts-ignore Type 'ParsedQs' is not assignable
                 const pluginId = await this.pluginService.checkin(id);
                 res.status(200).send(pluginId);
             } catch (err) {

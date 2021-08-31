@@ -15,7 +15,6 @@ import { Config } from '@gitpod/gitpod-db/lib/config';
 import { Env } from './env';
 import { log } from '@gitpod/gitpod-protocol/lib/util/logging';
 
-
 @injectable()
 export class SessionHandlerProvider {
     @inject(Config) protected readonly dbConfig: Config;
@@ -37,9 +36,9 @@ export class SessionHandlerProvider {
         options.secret = this.env.sessionSecret;
         options.saveUninitialized = false   // Do not save new cookie without content (uninitialized)
 
-        options.store = this.createStore();
-
         this.sessionHandler = session(options);
+
+        options.store = this.createStore();
     }
 
     protected getCookieOptions(env: Env): express.CookieOptions {
@@ -96,7 +95,9 @@ export class SessionHandlerProvider {
             database: 'gitpod-sessions',
             createDatabaseTable: true
         };
-        return new MySQLStore(options, undefined, (err) => {
+
+        const store = MySQLStore(session);
+        return new store(options, undefined, (err) => {
             if (err) {
                 log.debug('MySQL session store error: ', err);
             }

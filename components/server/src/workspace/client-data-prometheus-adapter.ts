@@ -8,8 +8,8 @@ import { User } from "@gitpod/gitpod-protocol";
 
 export const IClientDataPrometheusAdapter = Symbol('IClientDataPrometheusAdapter');
 export interface IClientDataPrometheusAdapter {
-    storeWorkspaceRoundTripTimeSample(time: Date, user: User, workspaceId: string, roundTripTimeInMilliseconds: number): void;
-    storePrebuildQueueLength(time: Date, cloneURL: string, queueLength: number): void;
+    storeWorkspaceRoundTripTimeSample(user: User, workspaceId: string, roundTripTimeInMilliseconds: number): void;
+    storePrebuildQueueLength(cloneURL: string, queueLength: number): void;
 }
 
 import * as prom from 'prom-client';
@@ -19,8 +19,8 @@ import { Env } from "../env";
 @injectable()
 export class ClientDataPrometheusAdapterImpl implements IClientDataPrometheusAdapter {
     @inject(Env) protected readonly env: Env;
-    protected readonly roundTripTimeGauge: prom.Gauge;
-    protected readonly prebuildQueueSizeGauge: prom.Gauge;
+    protected readonly roundTripTimeGauge: prom.Gauge<string>;
+    protected readonly prebuildQueueSizeGauge: prom.Gauge<string>;
 
     constructor() {
         this.roundTripTimeGauge = new prom.Gauge({
@@ -35,12 +35,11 @@ export class ClientDataPrometheusAdapterImpl implements IClientDataPrometheusAda
         })
     }
 
-    storeWorkspaceRoundTripTimeSample(time: Date, user: User, workspaceId: string, roundTripTimeInMilliseconds: number): void {
-        this.roundTripTimeGauge.set({ user: user.id, workspace: workspaceId, region: this.env.installationShortname }, roundTripTimeInMilliseconds, time);
+    storeWorkspaceRoundTripTimeSample(user: User, workspaceId: string, roundTripTimeInMilliseconds: number): void {
+        this.roundTripTimeGauge.set({ user: user.id, workspace: workspaceId, region: this.env.installationShortname }, roundTripTimeInMilliseconds);
     }
 
-    storePrebuildQueueLength(time: Date, cloneURL: string, queueLength: number): void {
-        this.prebuildQueueSizeGauge.set({ cloneURL, region: this.env.installationShortname }, queueLength, time);
+    storePrebuildQueueLength(cloneURL: string, queueLength: number): void {
+        this.prebuildQueueSizeGauge.set({ cloneURL, region: this.env.installationShortname }, queueLength);
     }
-
 }

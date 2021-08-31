@@ -153,7 +153,7 @@ export class CodeSyncService {
             }
             let resourceRev = req.params.ref;
             if (resourceRev !== fromTheiaRev) {
-                resourceRev = (await this.db.getResource(req.user.id, resourceKey, resourceRev))?.rev;
+                resourceRev = (await this.db.getResource(req.user.id, resourceKey, resourceRev))?.rev!;
             }
             if (!resourceRev && (resourceKey === SyncResource.Extensions || resourceKey === SyncResource.Settings)) {
                 resourceRev = fromTheiaRev;
